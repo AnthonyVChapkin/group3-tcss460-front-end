@@ -8,7 +8,6 @@ import EmailIcon from '@mui/icons-material/Email';
 
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Divider, List } from '@mui/material';
 
 // project import
@@ -16,8 +15,6 @@ import axios from 'utils/axios';
 import { IMessage } from 'types/message';
 import PrioritySelector from 'components/PrioritySelector';
 import { NoMessage, MessageListItem } from 'components/MessageListItem';
-
-const defaultTheme = createTheme();
 
 export default function MessagesList() {
   const [messages, setMessages] = React.useState<IMessage[]>([]);
@@ -53,7 +50,7 @@ export default function MessagesList() {
     ));
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <Container component="main" maxWidth="md">
         <CssBaseline />
         <Box
@@ -76,6 +73,6 @@ export default function MessagesList() {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
+    </>
   );
 }
