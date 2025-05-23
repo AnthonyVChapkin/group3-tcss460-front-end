@@ -29,7 +29,7 @@ const bookPages: NavItemType = {
           id: 'view-book',
           title: <FormattedMessage id="view-book" />,
           type: 'item',
-          url: '/books/book',
+          url: '/books/book/9780618260300',
           icon: icons.BookIcon
         },
         {

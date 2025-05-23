@@ -6,10 +6,15 @@ import { IBook } from '../../core/model/book.model';
 import data from '../../core/mock/data';
 import { BookDisplay } from 'components/BookDisplaySingle';
 
-export default function BookSingle() {
+export default function BookSingle({ isbn13 }: { isbn13: string }) {
   // For now, using the first book from mock data
   // In the future, you'll get the book ID from URL params and find the specific book
-  const [book] = useState<IBook>(data[5]); // If you want to change the book change the index number (0-5)
+  //const [book] = useState<IBook>(data[5]); // If you want to change the book change the index number (0-5)
+
+  let theBook = data.find((book) => book.isbn13.toString() === isbn13);
+  theBook = theBook ? theBook : data[5];
+
+  const [book] = useState<IBook>(theBook);
 
   const handleRatingChange = (newRating: number) => {
     // TODO: In future sprints, this will connect to API to update rating

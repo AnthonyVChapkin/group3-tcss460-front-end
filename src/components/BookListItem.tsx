@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
-import { Avatar, Box, IconButton, ListItem, ListItemAvatar, ListItemText, Rating, Typography } from '@mui/material';
+import { Avatar, Box, IconButton, ListItem, ListItemAvatar, ListItemText, Rating, Typography, Link } from '@mui/material';
 import { IBook } from '../core/model/book.model';
 
 export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn13: number) => void }) {
@@ -21,7 +21,7 @@ export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn1
         primary={
           <Box>
             <Typography variant="subtitle1" fontWeight="bold">
-              {book.title}
+              <Link href={`/books/book/${book.isbn13}`}>{book.title}</Link>
             </Typography>
             <Typography variant="body2" color="text.secondary">
               by {book.authors}
