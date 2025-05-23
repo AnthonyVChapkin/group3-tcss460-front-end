@@ -1,8 +1,7 @@
-import SamplePage from 'views/sample-page';
+import SingleBook from 'views/books/book-single';
 
-// ==============================|| PAGE ||============================== //
+// ==============================|| BOOK VIEW PAGE ||============================== //
 
-// Temp page so app doesn't crash
-export default function SampleViewPage() {
-  return <SamplePage />;
+export default function BookPage() {
+  return <SingleBook />;
 }
