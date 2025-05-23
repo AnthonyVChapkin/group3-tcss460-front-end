@@ -16,7 +16,7 @@ const icons = { LocalLibraryIcon, BookIcon, CollectionsBookmarkIcon };
 
 const bookPages: NavItemType = {
   id: 'book-pages',
-  title: <FormattedMessage id="Book Pages" />,
+  title: <FormattedMessage id="book-pages" />,
   type: 'group',
   children: [
     {
@@ -27,14 +27,14 @@ const bookPages: NavItemType = {
       children: [
         {
           id: 'view-book',
-          title: <FormattedMessage id="View a Book" />,
+          title: <FormattedMessage id="view-book" />,
           type: 'item',
           url: '/books/book',
           icon: icons.BookIcon
         },
         {
           id: 'view-books',
-          title: <FormattedMessage id="View Books" />,
+          title: <FormattedMessage id="view-books" />,
           type: 'item',
           url: '/books/list',
           icon: icons.CollectionsBookmarkIcon
