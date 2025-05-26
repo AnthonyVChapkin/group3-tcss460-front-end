@@ -22,91 +22,96 @@ export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       id: 'login',
-      name: 'login',
+      name: 'Login',
       credentials: {
-        email: { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email' },
-        password: { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter Password' }
+        email:    { label: 'Email',    type: 'email',    placeholder: 'Enter email' },
+        password: { label: 'Password', type: 'password', placeholder: 'Enter password' }
       },
       async authorize(credentials) {
         try {
-          const user = await axios.post('/login', {
-            password: credentials?.password,
-            email: credentials?.email
+          const res = await axios.post('/login', {
+            email:    credentials?.email,
+            password: credentials?.password
           });
-          if (user) {
-            user.data.user['accessToken'] = user.data.accessToken;
-            return user.data.user;
-          }
-        } catch (e: any) {
-          console.error(e);
-          const errorMessage = e?.message || e?.response?.data?.message || 'Something went wrong!';
-          throw new Error(errorMessage);
+          const user = res.data.user;
+          user.accessToken = res.data.accessToken;
+          return user;
+        } catch (err: any) {
+          const msg =
+            err.response?.data?.message ||
+            err.message ||
+            'Login failed';
+          throw new Error(msg);
         }
       }
     }),
+
     CredentialsProvider({
       id: 'register',
-      name: 'register',
+      name: 'Register',
       credentials: {
-        firstname: { name: 'firstname', label: 'First Name', type: 'text', placeholder: 'Enter First Name' },
-        lastname: { name: 'lastname', label: 'Last Name', type: 'text', placeholder: 'Enter Last Name' },
-        email: { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email' },
-        company: { name: 'company', label: 'Company', type: 'text', placeholder: 'Enter Company' },
-        password: { name: 'password', label: 'Password', type: 'password', placeholder: 'Enter Password' }
+        firstname: { label: 'First Name', type: 'text',     placeholder: 'Enter first name' },
+        lastname:  { label: 'Last Name',  type: 'text',     placeholder: 'Enter last name' },
+        email:     { label: 'Email',      type: 'email',    placeholder: 'Enter email' },
+        username:  { label: 'Username',   type: 'text',     placeholder: 'Choose a username' },
+        password:  { label: 'Password',   type: 'password', placeholder: 'Enter password' },
+        role:      { label: 'Role',       type: 'number',   placeholder: '1–5' },
+        phone:     { label: 'Phone',      type: 'text',     placeholder: '415-555-1212' }
       },
       async authorize(credentials) {
         try {
-          const user = await axios.post('/register', {
+          const res = await axios.post('/register', {
             firstname: credentials?.firstname,
-            lastname: credentials?.lastname,
-            company: credentials?.company,
-            password: credentials?.password,
-            email: credentials?.email,
-            role: 1,
-            username: credentials?.email,
-            phone: getRandomPhoneNumber() // TODO request phone number from user
+            lastname:  credentials?.lastname,
+            email:     credentials?.email,
+            username:  credentials?.username,
+            password:  credentials?.password,
+            role:      Number(credentials?.role),
+            phone:     credentials?.phone
           });
-
-          if (user) {
-            user.data.user['accessToken'] = user.data.accessToken;
-            return user.data.user;
-          }
-        } catch (e: any) {
-          console.error(e);
-          const errorMessage = e?.message || e?.response?.data?.message || 'Something went wrong!';
-          throw new Error(errorMessage);
+          const user = res.data.user;
+          user.accessToken = res.data.accessToken;
+          return user;
+        } catch (err: any) {
+          const msg =
+            err.response?.data?.message ||
+            err.message ||
+            'Registration failed';
+          throw new Error(msg);
         }
       }
     })
   ],
+
   callbacks: {
     jwt: async ({ token, user, account }) => {
       if (user) {
-        // @ts-ignore
         token.accessToken = user.accessToken;
-        token.id = user.id;
-        token.provider = account?.provider;
+        token.id          = user.id;
+        token.provider    = account?.provider;
       }
       return token;
     },
     session: ({ session, token }) => {
-      if (token) {
-        session.id = token.id;
-        session.provider = token.provider;
-        session.token = token;
-      }
+      session.id       = token.id as any;
+      session.provider = token.provider as any;
+      session.token    = token as any;
       return session;
     }
   },
+
   session: {
     strategy: 'jwt',
-    maxAge: Number(process.env.NEXT_APP_JWT_TIMEOUT!)
+    maxAge:   Number(process.env.REACT_APP_JWT_TIMEOUT)
   },
+
   jwt: {
-    secret: process.env.NEXT_APP_JWT_SECRET
+    secret: process.env.REACT_APP_JWT_SECRET
   },
+
   pages: {
-    signIn: '/login',
+    signIn:  '/login',
     newUser: '/register'
   }
 };
+
