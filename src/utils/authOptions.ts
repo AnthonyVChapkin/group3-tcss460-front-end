@@ -25,6 +25,7 @@ export const authOptions: NextAuthOptions = {
           return user;
         } catch (err: any) {
           const msg = err.response?.data?.message || err.message || 'Login failed';
+
           throw new Error(msg);
         }
       }
@@ -52,12 +53,14 @@ export const authOptions: NextAuthOptions = {
             password: credentials?.password,
             role: Number(credentials?.role),
             phone: credentials?.phone
+
           });
           const user = res.data.user;
           user.accessToken = res.data.accessToken;
           return user;
         } catch (err: any) {
           const msg = err.response?.data?.message || err.message || 'Registration failed';
+
           throw new Error(msg);
         }
       }
@@ -76,6 +79,7 @@ export const authOptions: NextAuthOptions = {
       session.id = token.id as any;
       session.provider = token.provider as any;
       session.token = token as any;
+
       return session;
     }
   },
@@ -83,6 +87,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: Number(process.env.REACT_APP_JWT_TIMEOUT)
+
   },
 
   jwt: {
@@ -90,7 +95,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: '/login',
+    signIn:  '/login',
     newUser: '/register'
   }
 };
+
