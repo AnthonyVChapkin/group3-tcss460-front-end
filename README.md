@@ -24,3 +24,22 @@ During the Alpha Sprint, the primary forms of communication were:
 - **Discord**: For messaging and calling.
 
 ## Alpha Sprint Comments
+
+## Beta I Sprint Contribution
+
+### Group Members:
+
+- **Anthony Chapkin**: Implemented a page to view a list of books.
+- **Peter Madin**: Implemented a page to view a book.
+- **Zakariye Luqman**: Updated the register page to match the backend web api.
+- **Riley Mansfield**: Implemented a form to change password.
+
+## Beta I Sprint Meetings
+
+- Met on a discord call to split up and coordinate work. 5/22/2025.
+
+During the Beta I Sprint, the primary forms of communication were:
+
+- **Discord**: For messaging and calling.
+
+## Beta I Sprint Comments
