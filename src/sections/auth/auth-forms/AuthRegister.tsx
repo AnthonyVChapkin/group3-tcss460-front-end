@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, SyntheticEvent } from 'react';
+import { useEffect, useState, SyntheticEvent, SetStateAction } from 'react';
 
 import NextLink from 'next/link';
 import { signIn } from 'next-auth/react';
@@ -38,7 +38,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
   const handleMouseDownPassword = (e: SyntheticEvent) => e.preventDefault();
   const changePassword = (value: string) => {
     const temp = strengthIndicator(value);
-    setLevel(strengthColor(temp));
+    //setLevel(strengthColor(temp));
   };
 
   useEffect(() => {
