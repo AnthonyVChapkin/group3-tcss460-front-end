@@ -40,7 +40,7 @@ export default function AuthLogin({ providers, csrfToken }: any) {
   const [capsWarning, setCapsWarning] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClickShowPassword = () => setShowPassword(prev => !prev);
+  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   const handleMouseDownPassword = (e: SyntheticEvent) => e.preventDefault();
   const onKeyDown = (keyEvent: any) => {
     setCapsWarning(keyEvent.getModifierState('CapsLock'));
@@ -57,11 +57,7 @@ export default function AuthLogin({ providers, csrfToken }: any) {
         email: Yup.string().email('Must be a valid email').required('Email is required'),
         password: Yup.string()
           .required('Password is required')
-          .test(
-            'no-leading-trailing-whitespace',
-            'Password cannot start or end with spaces',
-            (v) => v === v?.trim()
-          )
+          .test('no-leading-trailing-whitespace', 'Password cannot start or end with spaces', (v) => v === v?.trim())
       })}
       onSubmit={(values, { setErrors, setSubmitting }) => {
         signIn('login', {
@@ -157,14 +153,7 @@ export default function AuthLogin({ providers, csrfToken }: any) {
             <Grid item xs={12} sx={{ mt: -1 }}>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={checked}
-                      onChange={(e) => setChecked(e.target.checked)}
-                      name="checked"
-                      size="small"
-                    />
-                  }
+                  control={<Checkbox checked={checked} onChange={(e) => setChecked(e.target.checked)} name="checked" size="small" />}
                   label="Keep me signed in"
                 />
                 <NextLink href="/forget-pass" passHref>
@@ -181,15 +170,7 @@ export default function AuthLogin({ providers, csrfToken }: any) {
 
             <Grid item xs={12}>
               <AnimateButton>
-                <Button
-                  disableElevation
-                  disabled={isSubmitting}
-                  fullWidth
-                  size="large"
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                >
+                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
                   Login
                 </Button>
               </AnimateButton>

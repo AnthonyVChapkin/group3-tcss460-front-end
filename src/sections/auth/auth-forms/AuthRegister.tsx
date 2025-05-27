@@ -31,7 +31,6 @@ import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 
 import { StringColorProps } from 'types/password';
 
-
 export default function AuthRegister({ providers, csrfToken }: any) {
   const [level, setLevel] = useState<StringColorProps>();
   const [showPassword, setShowPassword] = useState(false);
