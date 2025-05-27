@@ -59,7 +59,6 @@ export default function AuthLogin({ providers, csrfToken }: any) {
         password: Yup.string()
           .required('Password is required')
           .test('no-leading-trailing-whitespace', 'Password cannot start or end with spaces', (v) => v === v?.trim())
-
       })}
       onSubmit={(values, { setErrors, setSubmitting }) => {
         signIn('login', {
@@ -156,7 +155,6 @@ export default function AuthLogin({ providers, csrfToken }: any) {
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <FormControlLabel
                   control={<Checkbox checked={checked} onChange={(e) => setChecked(e.target.checked)} name="checked" size="small" />}
-
                   label="Keep me signed in"
                 />
                 <NextLink href="/forget-pass" passHref>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation'; 
+import { useParams } from 'next/navigation';
 import SingleBook from 'views/books/book-single';
 
 // ==============================|| BOOK VIEW PAGE ||============================== //

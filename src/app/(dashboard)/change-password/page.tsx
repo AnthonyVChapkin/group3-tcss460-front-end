@@ -25,9 +25,7 @@ export default function ChangePasswordPage() {
       }}
       validationSchema={Yup.object().shape({
         currentPassword: Yup.string().required('Current password is required'),
-        newPassword: Yup.string()
-          .min(8, 'New password must be at least 8 characters')
-          .required('New password is required'),
+        newPassword: Yup.string().min(8, 'New password must be at least 8 characters').required('New password is required'),
         confirmPassword: Yup.string()
           .oneOf([Yup.ref('newPassword')], 'Passwords must match')
           .required('Confirm password is required')
@@ -57,9 +55,7 @@ export default function ChangePasswordPage() {
                   error={Boolean(touched.currentPassword && errors.currentPassword)}
                 />
               </Stack>
-              {touched.currentPassword && errors.currentPassword && (
-                <FormHelperText error>{errors.currentPassword}</FormHelperText>
-              )}
+              {touched.currentPassword && errors.currentPassword && <FormHelperText error>{errors.currentPassword}</FormHelperText>}
             </Grid>
 
             <Grid item xs={12}>
@@ -76,9 +72,7 @@ export default function ChangePasswordPage() {
                   error={Boolean(touched.newPassword && errors.newPassword)}
                 />
               </Stack>
-              {touched.newPassword && errors.newPassword && (
-                <FormHelperText error>{errors.newPassword}</FormHelperText>
-              )}
+              {touched.newPassword && errors.newPassword && <FormHelperText error>{errors.newPassword}</FormHelperText>}
             </Grid>
 
             <Grid item xs={12}>
@@ -95,9 +89,7 @@ export default function ChangePasswordPage() {
                   error={Boolean(touched.confirmPassword && errors.confirmPassword)}
                 />
               </Stack>
-              {touched.confirmPassword && errors.confirmPassword && (
-                <FormHelperText error>{errors.confirmPassword}</FormHelperText>
-              )}
+              {touched.confirmPassword && errors.confirmPassword && <FormHelperText error>{errors.confirmPassword}</FormHelperText>}
             </Grid>
 
             {successMessage && (
@@ -107,15 +99,7 @@ export default function ChangePasswordPage() {
             )}
 
             <Grid item xs={12}>
-              <Button
-                disableElevation
-                disabled={isSubmitting}
-                fullWidth
-                size="large"
-                type="submit"
-                variant="contained"
-                color="primary"
-              >
+              <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
                 Submit
               </Button>
             </Grid>

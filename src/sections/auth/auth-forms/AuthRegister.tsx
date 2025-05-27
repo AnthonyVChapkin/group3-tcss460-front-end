@@ -34,7 +34,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
   const [level, setLevel] = useState<StringColorProps>({ label: '', color: '' });
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClickShowPassword = () => setShowPassword(prev => !prev);
+  const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   const handleMouseDownPassword = (e: SyntheticEvent) => e.preventDefault();
   const changePassword = (value: string) => {
     const temp = strengthIndicator(value);
@@ -59,42 +59,38 @@ export default function AuthRegister({ providers, csrfToken }: any) {
       }}
       validationSchema={Yup.object().shape({
         firstname: Yup.string().max(255).required('First Name is required'),
-        lastname:  Yup.string().max(255).required('Last Name is required'),
-        email:     Yup.string().email('Invalid email').required('Email is required'),
-        username:  Yup.string()
+        lastname: Yup.string().max(255).required('Last Name is required'),
+        email: Yup.string().email('Invalid email').required('Email is required'),
+        username: Yup.string()
           .min(3, 'Username must be at least 3 characters')
           .max(30, 'Username must be at most 30 characters')
           .required('Username is required'),
-        password:  Yup.string()
+        password: Yup.string()
           .min(8, 'Password must be at least 8 characters')
-          .test(
-            'no-leading-trailing-whitespace',
-            'Password cannot start or end with spaces',
-            (v) => v === v?.trim()
-          )
+          .test('no-leading-trailing-whitespace', 'Password cannot start or end with spaces', (v) => v === v?.trim())
           .required('Password is required'),
-        role:      Yup.number()
+        role: Yup.number()
           .typeError('Role must be a number between 1 and 5')
           .integer()
           .min(1, 'Role must be between 1 and 5')
           .max(5, 'Role must be between 1 and 5')
           .required('Role is required'),
-        phone:     Yup.string()
+        phone: Yup.string()
           .matches(/^\d{3}-\d{3}-\d{4}$/, 'Phone must be XXX-XXX-XXXX')
           .required('Phone number is required')
       })}
       onSubmit={async (values, { setErrors, setSubmitting }) => {
         const payload = {
           firstname: values.firstname.trim(),
-          lastname:  values.lastname.trim(),
-          email:     values.email.trim(),
-          username:  values.username.trim(),
-          password:  values.password,
-          role:      Number(values.role),
-          phone:     values.phone
+          lastname: values.lastname.trim(),
+          email: values.email.trim(),
+          username: values.username.trim(),
+          password: values.password,
+          role: Number(values.role),
+          phone: values.phone
         };
         signIn('register', {
-          redirect:    false,
+          redirect: false,
           ...payload,
           callbackUrl: APP_DEFAULT_PATH
         }).then((res: any) => {
@@ -123,9 +119,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                   error={Boolean(touched.firstname && errors.firstname)}
                 />
               </Stack>
-              {touched.firstname && errors.firstname && (
-                <FormHelperText error>{errors.firstname}</FormHelperText>
-              )}
+              {touched.firstname && errors.firstname && <FormHelperText error>{errors.firstname}</FormHelperText>}
             </Grid>
 
             <Grid item xs={6}>
@@ -142,9 +136,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                   error={Boolean(touched.lastname && errors.lastname)}
                 />
               </Stack>
-              {touched.lastname && errors.lastname && (
-                <FormHelperText error>{errors.lastname}</FormHelperText>
-              )}
+              {touched.lastname && errors.lastname && <FormHelperText error>{errors.lastname}</FormHelperText>}
             </Grid>
 
             <Grid item xs={12}>
@@ -162,9 +154,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                   error={Boolean(touched.email && errors.email)}
                 />
               </Stack>
-              {touched.email && errors.email && (
-                <FormHelperText error>{errors.email}</FormHelperText>
-              )}
+              {touched.email && errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
             </Grid>
 
             <Grid item xs={12}>
@@ -181,9 +171,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                   error={Boolean(touched.username && errors.username)}
                 />
               </Stack>
-              {touched.username && errors.username && (
-                <FormHelperText error>{errors.username}</FormHelperText>
-              )}
+              {touched.username && errors.username && <FormHelperText error>{errors.username}</FormHelperText>}
             </Grid>
 
             <Grid item xs={12}>
@@ -216,9 +204,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                   }
                 />
               </Stack>
-              {touched.password && errors.password && (
-                <FormHelperText error>{errors.password}</FormHelperText>
-              )}
+              {touched.password && errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
               <Box sx={{ mt: 2 }}>
                 <Grid container alignItems="center" spacing={1}>
                   <Grid item>
@@ -248,9 +234,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                   error={Boolean(touched.role && errors.role)}
                 />
               </Stack>
-              {touched.role && errors.role && (
-                <FormHelperText error>{errors.role}</FormHelperText>
-              )}
+              {touched.role && errors.role && <FormHelperText error>{errors.role}</FormHelperText>}
             </Grid>
 
             <Grid item xs={6}>
@@ -268,9 +252,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                   error={Boolean(touched.phone && errors.phone)}
                 />
               </Stack>
-              {touched.phone && errors.phone && (
-                <FormHelperText error>{errors.phone}</FormHelperText>
-              )}
+              {touched.phone && errors.phone && <FormHelperText error>{errors.phone}</FormHelperText>}
             </Grid>
 
             <Grid item xs={12} sx={{ mt: -1 }}>
@@ -282,7 +264,8 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                 &nbsp;and&nbsp;
                 <NextLink href="/" passHref>
                   <Link>Privacy Policy</Link>
-                </NextLink>.
+                </NextLink>
+                .
               </Typography>
             </Grid>
 
@@ -294,15 +277,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
 
             <Grid item xs={12}>
               <AnimateButton>
-                <Button
-                  disableElevation
-                  disabled={isSubmitting}
-                  fullWidth
-                  size="large"
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                >
+                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
                   Create Account
                 </Button>
               </AnimateButton>

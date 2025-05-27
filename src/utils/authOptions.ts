@@ -53,7 +53,6 @@ export const authOptions: NextAuthOptions = {
             password: credentials?.password,
             role: Number(credentials?.role),
             phone: credentials?.phone
-
           });
           const user = res.data.user;
           user.accessToken = res.data.accessToken;
@@ -87,7 +86,6 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: Number(process.env.REACT_APP_JWT_TIMEOUT)
-
   },
 
   jwt: {
@@ -95,8 +93,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn:  '/login',
+    signIn: '/login',
     newUser: '/register'
   }
 };
-
