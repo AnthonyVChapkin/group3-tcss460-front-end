@@ -2,12 +2,22 @@
 
 import { useState, Fragment } from 'react';
 import { IBook } from '../../core/model/book.model';
-import data from '../../core/mock/data';
 import { BookListItem, NoBook } from 'components/BookListItem';
 import { Box, Container, CssBaseline, Divider, List, Typography } from '@mui/material';
+import axios from 'utils/axios';
+import React from 'react';
 
 export default function BooksList() {
-  const [books, setBooks] = useState<IBook[]>(data);
+  const [books, setBooks] = useState<IBook[]>([]);
+
+  React.useEffect(() => {
+    axios
+      .get('/books?isbn13=9780142000670')
+      .then((response) => {
+        setBooks(response.data.books);
+      })
+      .catch((error) => console.error(error));
+  }, []);
 
   const handleDelete = (isbn13: number) => {
     setBooks(books.filter((book) => book.isbn13 != isbn13));

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import { Avatar, Box, IconButton, ListItem, ListItemAvatar, ListItemText, Rating, Typography, ListItemButton } from '@mui/material';
 import { IBook } from '../core/model/book.model';
+import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 
 export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn13: number) => void }) {
   return (
@@ -10,38 +10,41 @@ export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn1
       alignItems="flex-start"
       disablePadding
       secondaryAction={
-        <IconButton edge="end" aria-label="delete" onClick={() => onDelete(book.isbn13)}>
+        <IconButton edge="end" aria-label={`delete ${book.title}`} onClick={() => onDelete(book.isbn13)}>
           <DeleteIcon />
         </IconButton>
       }
     >
-      <Link href={`/books/book/${book.isbn13}`} passHref legacyBehavior>
-        <ListItemButton component="a">
-          <ListItemAvatar>
-            <Avatar alt={book.title} src={book.icons?.small || book.icons?.large} variant="square" sx={{ width: 56, height: 84, mr: 2 }} />
-          </ListItemAvatar>
+      <ListItemButton component={Link} href={`/books/book/${book.isbn13}`} sx={{ textDecoration: 'none' }}>
+        <ListItemAvatar>
+          <Avatar alt={book.title} src={book.icons?.small || book.icons?.large} variant="square" sx={{ width: 56, height: 84, mr: 2 }} />
+        </ListItemAvatar>
 
-          <ListItemText
-            primary={
-              <Typography variant="subtitle1" fontWeight="bold">
-                {book.title}
+        <ListItemText
+          primary={
+            <Typography variant="subtitle1" fontWeight="bold" component="div">
+              {book.title}
+            </Typography>
+          }
+          secondaryTypographyProps={{ component: 'div' }}
+          secondary={
+            <Box mt={1}>
+              <Typography variant="body2" color="text.secondary" component="div">
+                by {book.authors}
               </Typography>
-            }
-            secondary={
-              <Box mt={1}>
-                <Typography variant="body2" color="text.secondary">
-                  by {book.authors}
+              <Typography variant="body2" component="div">
+                ISBN: {book.isbn13}
+              </Typography>
+              <Box display="flex" alignItems="center" gap={1} mt={0.5}>
+                <Rating name="average-rating" value={book.ratings.average} precision={0.1} readOnly size="small" />
+                <Typography variant="body2" component="div">
+                  ({book.ratings.average.toFixed(2)})
                 </Typography>
-                <Typography variant="body2">ISBN: {book.isbn13}</Typography>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Rating name="average-rating" value={book.ratings.average} precision={0.1} readOnly size="small" />
-                  <Typography variant="body2">({book.ratings.average.toFixed(2)})</Typography>
-                </Box>
               </Box>
-            }
-          />
-        </ListItemButton>
-      </Link>
+            </Box>
+          }
+        />
+      </ListItemButton>
     </ListItem>
   );
 }
