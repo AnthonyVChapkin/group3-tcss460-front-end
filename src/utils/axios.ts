@@ -3,9 +3,12 @@ import axios, { AxiosRequestConfig } from 'axios';
 // next
 import { getSession } from 'next-auth/react';
 
-const axiosServices = axios.create({ baseURL: process.env.WEB_API_URL || 'http://localhost:3010/' });
+// Use the Heroku API URL with trailing slash
+const axiosServices = axios.create({
+  baseURL: process.env.WEB_API_URL || 'https://group9-tcss460-web-api-84fb72a7d497.herokuapp.com/'
+});
 
-// ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
+// ==============================|| AXIOS - FOR API SERVICES ||============================== //
 
 axiosServices.interceptors.request.use(
   async (config) => {
