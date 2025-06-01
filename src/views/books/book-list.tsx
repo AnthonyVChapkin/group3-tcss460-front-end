@@ -76,74 +76,82 @@ export default function BooksList() {
   ));
 
   return (
-    <Container component="main" maxWidth="md">
+    <Container component="main" maxWidth="lg">
       <CssBaseline />
 
-      <Paper
-        elevation={3}
-        sx={{
-          position: 'sticky',
-          top: 64,
-          zIndex: 1000,
-          backgroundColor: 'background.paper',
-          padding: 2,
-          borderBottom: '1px solid #ccc',
-          mb: 2
-        }}
-      >
-        <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
-          Filter Books
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="ISBN-13" name="isbn13" value={filters.isbn13} onChange={handleInputChange} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Authors" name="authors" value={filters.authors} onChange={handleInputChange} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Publication Year"
-                name="publication_year"
-                value={filters.publication_year}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Original Title"
-                name="original_title"
-                value={filters.original_title}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Title" name="title" value={filters.title} onChange={handleInputChange} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Min Rating" name="rating" value={filters.rating} onChange={handleInputChange} />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" fullWidth variant="contained">
-                Apply Filters
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
+      <Grid container spacing={2}>
+        {/* Sidebar Filter Form */}
+        <Grid item xs={12} md={4}>
+          <Paper
+            elevation={3}
+            sx={{
+              position: 'sticky',
+              top: 72,
+              zIndex: 1000,
+              backgroundColor: 'background.paper',
+              padding: 2,
+              paddingTop: 3,
+              border: '1px solid #ccc'
+            }}
+          >
+            <Typography component="h1" variant="h6" sx={{ mb: 2 }}>
+              Filter Books
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit}>
+              <Grid container spacing={2} direction="column">
+                <Grid item>
+                  <TextField fullWidth label="ISBN-13" name="isbn13" value={filters.isbn13} onChange={handleInputChange} />
+                </Grid>
+                <Grid item>
+                  <TextField fullWidth label="Authors" name="authors" value={filters.authors} onChange={handleInputChange} />
+                </Grid>
+                <Grid item>
+                  <TextField
+                    fullWidth
+                    label="Publication Year"
+                    name="publication_year"
+                    value={filters.publication_year}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item>
+                  <TextField
+                    fullWidth
+                    label="Original Title"
+                    name="original_title"
+                    value={filters.original_title}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item>
+                  <TextField fullWidth label="Title" name="title" value={filters.title} onChange={handleInputChange} />
+                </Grid>
+                <Grid item>
+                  <TextField fullWidth label="Min Rating" name="rating" value={filters.rating} onChange={handleInputChange} />
+                </Grid>
+                <Grid item>
+                  <Button type="submit" fullWidth variant="contained">
+                    Apply Filters
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </Paper>
+        </Grid>
 
-      <Box ref={bookListRef}>
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <CircularProgress size={48} />
+        {/* Book List */}
+        <Grid item xs={12} md={8}>
+          <Box ref={bookListRef}>
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <CircularProgress size={48} />
+              </Box>
+            ) : (
+              <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
+            )}
           </Box>
-        ) : (
-          <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
-        )}
-      </Box>
+        </Grid>
+      </Grid>
     </Container>
   );
 }
