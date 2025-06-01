@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, Fragment } from 'react';
-import { Box, Container, CssBaseline, Divider, List, Typography, CircularProgress, TextField, Button, Grid } from '@mui/material';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
+import { Box, Container, CssBaseline, Divider, List, Typography, CircularProgress, TextField, Button, Grid, Paper } from '@mui/material';
 import { IBook } from '../../core/model/book.model';
 import { BookListItem, NoBook } from 'components/BookListItem';
 import axios from 'utils/axios';
@@ -15,10 +15,13 @@ export default function BooksList() {
     publication_year: '',
     original_title: '',
     title: '',
-    rating: '4.7' // To not load too many books at once.
+    rating: '4.7'
   });
 
-  const fetchBooks = async () => {
+  const bookListRef = useRef<HTMLDivElement>(null);
+  const hasFetchedOnce = useRef(false);
+
+  const fetchBooks = async ({ scrollToTop = false } = {}) => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
@@ -30,6 +33,12 @@ export default function BooksList() {
 
       const response = await axios.get(`/books?${params.toString()}`);
       setBooks(response.data.books || []);
+
+      if (scrollToTop) {
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 100);
+      }
     } catch (error) {
       console.error('Error fetching books:', error);
       setBooks([]);
@@ -39,10 +48,13 @@ export default function BooksList() {
   };
 
   useEffect(() => {
-    fetchBooks();
+    if (!hasFetchedOnce.current) {
+      hasFetchedOnce.current = true;
+      fetchBooks();
+    }
   }, []);
 
-  // Not connected to the web api yet.
+  // Not connected to web api yet.
   const handleDelete = (isbn13: number) => {
     setBooks(books.filter((book) => book.isbn13 !== isbn13));
   };
@@ -53,7 +65,7 @@ export default function BooksList() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchBooks();
+    fetchBooks({ scrollToTop: true });
   };
 
   const booksAsComponents = books.map((book, index, books) => (
@@ -66,12 +78,23 @@ export default function BooksList() {
   return (
     <Container component="main" maxWidth="md">
       <CssBaseline />
-      <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography component="h1" variant="h5">
-          Books
-        </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
+      <Paper
+        elevation={3}
+        sx={{
+          position: 'sticky',
+          top: 64,
+          zIndex: 1000,
+          backgroundColor: 'background.paper',
+          padding: 2,
+          borderBottom: '1px solid #ccc',
+          mb: 2
+        }}
+      >
+        <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
+          Filter Books
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField fullWidth label="ISBN-13" name="isbn13" value={filters.isbn13} onChange={handleInputChange} />
@@ -110,16 +133,16 @@ export default function BooksList() {
             </Grid>
           </Grid>
         </Box>
+      </Paper>
 
-        <Box sx={{ mt: 4, width: '100%' }}>
-          {isLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <CircularProgress size={48} />
-            </Box>
-          ) : (
-            <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
-          )}
-        </Box>
+      <Box ref={bookListRef}>
+        {isLoading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <CircularProgress size={48} />
+          </Box>
+        ) : (
+          <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
+        )}
       </Box>
     </Container>
   );
