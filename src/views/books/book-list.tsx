@@ -12,13 +12,14 @@ export default function BooksList() {
 
   React.useEffect(() => {
     axios
-      .get('/books?isbn13=9780142000670')
+      .get('/books?rating=4.5')
       .then((response) => {
         setBooks(response.data.books);
       })
       .catch((error) => console.error(error));
   }, []);
 
+  // Is not connected to api for now.
   const handleDelete = (isbn13: number) => {
     setBooks(books.filter((book) => book.isbn13 != isbn13));
   };
