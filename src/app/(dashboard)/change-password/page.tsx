@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'utils/axios';
+
 
 // MUI
 import Grid from '@mui/material/Grid';
@@ -30,10 +32,23 @@ export default function ChangePasswordPage() {
           .oneOf([Yup.ref('newPassword')], 'Passwords must match')
           .required('Confirm password is required')
       })}
-      onSubmit={(values, { setSubmitting }) => {
-        setSuccessMessage('Password change form is valid (mock only).');
-        setSubmitting(false);
-      }}
+     onSubmit={async (values, { setSubmitting, resetForm }) => {
+  setSuccessMessage('');
+  try {
+    await axios.post('/change-password', {
+      currentPassword: values.currentPassword,
+      newPassword: values.newPassword
+    });
+
+    setSuccessMessage('Password changed successfully!');
+    resetForm();
+  } catch (error: any) {
+    console.error(error);
+    alert(error?.response?.data?.message || error.message || 'Password change failed');
+  } finally {
+    setSubmitting(false);
+  }
+}}
     >
       {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <form noValidate onSubmit={handleSubmit}>
