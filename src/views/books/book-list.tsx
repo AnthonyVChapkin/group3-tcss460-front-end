@@ -2,24 +2,31 @@
 
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import { Box, Container, CssBaseline, Divider, List, Typography, CircularProgress, TextField, Button, Grid, Paper } from '@mui/material';
-import { IBook } from '../../core/model/book.model';
 import { BookListItem, NoBook } from 'components/BookListItem';
 import axios from 'utils/axios';
+import { useBookList } from 'contexts/BookListContext';
+import { usePathname } from 'next/navigation';
 
 export default function BooksList() {
-  const [books, setBooks] = useState<IBook[]>([]);
+  const { books, setBooks, filters, setFilters, scrollY, setScrollY } = useBookList();
   const [isLoading, setIsLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    isbn13: '',
-    authors: '',
-    publication_year: '',
-    original_title: '',
-    title: '',
-    rating: '4.7'
-  });
 
   const bookListRef = useRef<HTMLDivElement>(null);
-  const hasFetchedOnce = useRef(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    return () => {
+      if (pathname === 'books/list') {
+        setScrollY(window.scrollY);
+      }
+    };
+  }, [pathname, setScrollY]);
+
+  useEffect(() => {
+    if (books.length > 0 && scrollY > 0) {
+      window.scrollTo(0, scrollY);
+    }
+  }, [books]);
 
   const fetchBooks = async ({ scrollToTop = false } = {}) => {
     setIsLoading(true);
@@ -48,8 +55,7 @@ export default function BooksList() {
   };
 
   useEffect(() => {
-    if (!hasFetchedOnce.current) {
-      hasFetchedOnce.current = true;
+    if (books.length === 0) {
       fetchBooks();
     }
   }, []);

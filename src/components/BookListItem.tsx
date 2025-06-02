@@ -3,8 +3,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Avatar, Box, IconButton, ListItem, ListItemAvatar, ListItemText, Rating, Typography, ListItemButton } from '@mui/material';
 import { IBook } from '../core/model/book.model';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
+import { useBookList } from 'contexts/BookListContext';
 
 export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn13: number) => void }) {
+  const { setScrollY } = useBookList();
+
+  const handleClick = () => {
+    setScrollY(window.scrollY);
+  };
+
   return (
     <ListItem
       alignItems="flex-start"
@@ -15,7 +22,7 @@ export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn1
         </IconButton>
       }
     >
-      <ListItemButton component={Link} href={`/books/book/${book.isbn13}`} sx={{ textDecoration: 'none' }}>
+      <ListItemButton component={Link} href={`/books/book/${book.isbn13}`} sx={{ textDecoration: 'none' }} onClick={handleClick}>
         <ListItemAvatar>
           <Avatar alt={book.title} src={book.icons?.small || book.icons?.large} variant="square" sx={{ width: 56, height: 84, mr: 2 }} />
         </ListItemAvatar>
