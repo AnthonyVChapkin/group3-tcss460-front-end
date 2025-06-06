@@ -7,25 +7,29 @@ import axios from 'utils/axios';
 import { useBookList } from 'contexts/BookListContext';
 
 export default function CursorPaginatedBooksList() {
-  const { books, setBooks, setScrollY } = useBookList();
+  const { books, setBooks, setScrollY, cursors, setCursors } = useBookList();
   const [isLoading, setIsLoading] = useState(false);
-  const [cursor, setCursor] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
   const [total, setTotal] = useState(0);
   const limit = 10;
 
-  const fetchBooks = async (nextCursor = 0) => {
+  const fetchBooks = async (nextCursor: number, isForward: boolean) => {
     setIsLoading(true);
     try {
-      const params = new URLSearchParams({ limit: limit.toString(), cursor: nextCursor.toString() });
-      const response = await axios.get(`/books/cursor?${params.toString()}`);
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        cursor: nextCursor.toString()
+      });
 
+      const response = await axios.get(`/books/cursor?${params.toString()}`);
       const { entries, pagination } = response.data;
 
       setBooks(entries);
-      setCursor(pagination.cursor + limit);
+      setScrollY(0);
       setTotal(pagination.totalRecords);
-      setHasMore(pagination.cursor + limit < pagination.totalRecords);
+
+      if (isForward) {
+        setCursors([...cursors, nextCursor]);
+      }
     } catch (error) {
       console.error('Error fetching cursor paginated books:', error);
     } finally {
@@ -34,32 +38,46 @@ export default function CursorPaginatedBooksList() {
   };
 
   useEffect(() => {
-    fetchBooks(0);
+    const current = cursors[cursors.length - 1];
+    fetchBooks(current, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleNext = () => {
-    fetchBooks(cursor);
-    setScrollY(0);
+    const current = cursors[cursors.length - 1];
+    const newCursor = current + limit;
+    fetchBooks(newCursor, true);
   };
 
-  // Not connected to web api yet.
+  const handlePrevious = () => {
+    if (cursors.length <= 1) return;
+
+    const updated = [...cursors];
+    updated.pop();
+    const prevCursor = updated[updated.length - 1];
+    setCursors(updated);
+    fetchBooks(prevCursor, false);
+  };
+
   const handleDelete = (isbn13: number) => {
-    setBooks(books.filter((book) => book.isbn13 !== isbn13));
+    setBooks(books.filter((b) => b.isbn13 !== isbn13));
   };
 
-  const booksAsComponents = books.map((book, index, books) => (
+  const booksAsComponents = books.map((book, idx) => (
     <Fragment key={book.isbn13}>
       <BookListItem book={book} onDelete={handleDelete} />
-      {index < books.length - 1 && <Divider variant="middle" component="li" />}
+      {idx < books.length - 1 && <Divider variant="middle" component="li" />}
     </Fragment>
   ));
+
+  const hasMore = cursors[cursors.length - 1] + limit < total;
+  const canGoBack = cursors.length > 1;
 
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
 
       <Grid container spacing={2}>
-        {/* Book List */}
         <Grid item xs={12}>
           <Box>
             {isLoading ? (
@@ -72,9 +90,8 @@ export default function CursorPaginatedBooksList() {
                   Showing {books.length} of {total} books
                 </Typography>
                 <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
-
                 <Box display="flex" justifyContent="space-between" mt={2}>
-                  <Button onClick={handleNext} variant="contained" disabled={!hasMore || isLoading}>
+                  <Button onClick={handlePrevious} variant="contained" disabled={!canGoBack || isLoading}>
                     Previous Page
                   </Button>
                   <Button onClick={handleNext} variant="contained" disabled={!hasMore || isLoading}>

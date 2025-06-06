@@ -27,7 +27,7 @@ export const BookListProvider = ({ children }: { children: React.ReactNode }) =>
     rating: '4.7'
   });
   const [scrollY, setScrollY] = useState(0);
-  const [cursors, setCursors] = useState<number[]>([]);
+  const [cursors, setCursors] = useState<number[]>([0]);
 
   return (
     <BookListContext.Provider value={{ books, setBooks, filters, setFilters, scrollY, setScrollY, cursors, setCursors }}>
