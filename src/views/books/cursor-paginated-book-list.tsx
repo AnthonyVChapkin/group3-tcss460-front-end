@@ -7,7 +7,8 @@ import axios from 'utils/axios';
 import { useBookList } from 'contexts/BookListContext';
 
 export default function CursorPaginatedBooksList() {
-  const { books, setBooks, setScrollY, cursors, setCursors } = useBookList();
+  const { booksCursor, setBooksCursor, setScrollY, cursors, setCursors } = useBookList();
+
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const limit = 10;
@@ -23,7 +24,7 @@ export default function CursorPaginatedBooksList() {
       const response = await axios.get(`/books/cursor?${params.toString()}`);
       const { entries, pagination } = response.data;
 
-      setBooks(entries);
+      setBooksCursor(entries);
       setScrollY(0);
       setTotal(pagination.totalRecords);
 
@@ -38,6 +39,7 @@ export default function CursorPaginatedBooksList() {
   };
 
   useEffect(() => {
+    // Always fetch using the current “last” cursor (initially [0])
     const current = cursors[cursors.length - 1];
     fetchBooks(current, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,13 +62,13 @@ export default function CursorPaginatedBooksList() {
   };
 
   const handleDelete = (isbn13: number) => {
-    setBooks(books.filter((b) => b.isbn13 !== isbn13));
+    setBooksCursor(booksCursor.filter((b) => b.isbn13 !== isbn13));
   };
 
-  const booksAsComponents = books.map((book, idx) => (
+  const booksAsComponents = booksCursor.map((book, idx) => (
     <Fragment key={book.isbn13}>
       <BookListItem book={book} onDelete={handleDelete} />
-      {idx < books.length - 1 && <Divider variant="middle" component="li" />}
+      {idx < booksCursor.length - 1 && <Divider variant="middle" component="li" />}
     </Fragment>
   ));
 
@@ -87,9 +89,10 @@ export default function CursorPaginatedBooksList() {
             ) : (
               <>
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  Showing {books.length} of {total} books
+                  Showing {booksCursor.length} of {total} books
                 </Typography>
                 <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
+
                 <Box display="flex" justifyContent="space-between" mt={2}>
                   <Button onClick={handlePrevious} variant="contained" disabled={!canGoBack || isLoading}>
                     Previous Page

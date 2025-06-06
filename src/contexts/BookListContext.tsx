@@ -5,32 +5,64 @@ import { IBook } from 'core/model/book.model';
 
 type BookListContextProps = {
   books: IBook[];
-  filters: Record<string, string>;
-  scrollY: number;
   setBooks: (books: IBook[]) => void;
-  setFilters: (filters: Record<string, string>) => void;
-  setScrollY: (y: number) => void;
+
+  booksCursor: IBook[];
+  setBooksCursor: (books: IBook[]) => void;
   cursors: number[];
-  setCursors: (cursors: number[]) => void;
+  setCursors: React.Dispatch<React.SetStateAction<number[]>>;
+
+  booksOffset: IBook[];
+  setBooksOffset: (books: IBook[]) => void;
+  offset: number;
+  setOffset: React.Dispatch<React.SetStateAction<number>>;
+
+  filters: Record<string, string>;
+  setFilters: (filters: Record<string, string>) => void;
+  scrollY: number;
+  setScrollY: (y: number) => void;
 };
 
 const BookListContext = createContext<BookListContextProps | undefined>(undefined);
 
 export const BookListProvider = ({ children }: { children: React.ReactNode }) => {
   const [books, setBooks] = useState<IBook[]>([]);
+
+  const [booksCursor, setBooksCursor] = useState<IBook[]>([]);
+  const [cursors, setCursors] = useState<number[]>([0]);
+
+  const [booksOffset, setBooksOffset] = useState<IBook[]>([]);
+  const [offset, setOffset] = useState<number>(0);
+
   const [filters, setFilters] = useState<Record<string, string>>({
     isbn13: '',
     authors: '',
     publication_year: '',
     original_title: '',
     title: '',
-    rating: '4.7'
+    rating: '4.7',
   });
   const [scrollY, setScrollY] = useState(0);
-  const [cursors, setCursors] = useState<number[]>([0]);
 
   return (
-    <BookListContext.Provider value={{ books, setBooks, filters, setFilters, scrollY, setScrollY, cursors, setCursors }}>
+    <BookListContext.Provider
+      value={{
+        books,
+        setBooks,
+        booksCursor,
+        setBooksCursor,
+        cursors,
+        setCursors,
+        booksOffset,
+        setBooksOffset,
+        offset,
+        setOffset,
+        filters,
+        setFilters,
+        scrollY,
+        setScrollY
+      }}
+    >
       {children}
     </BookListContext.Provider>
   );
