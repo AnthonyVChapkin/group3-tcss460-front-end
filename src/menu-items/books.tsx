@@ -45,6 +45,13 @@ const bookPages: NavItemType = {
           type: 'item',
           url: '/books/cursor-list',
           icon: icons.CollectionsBookmarkIcon
+        },
+        {
+          id: 'view-offset-paginated-books',
+          title: <FormattedMessage id="view-offset-paginated-books" />,
+          type: 'item',
+          url: '/books/offset-list',
+          icon: icons.CollectionsBookmarkIcon
         }
       ]
     }

@@ -18,6 +18,8 @@ type BookListContextProps = {
   setBooksOffset: (books: IBook[]) => void;
   offset: number;
   setOffset: React.Dispatch<React.SetStateAction<number>>;
+  offsetTotalPages: number;
+  setOffsetTotalPages: (offsetTotalPages: number) => void;
 
   filters: Record<string, string>;
   setFilters: (filters: Record<string, string>) => void;
@@ -36,6 +38,7 @@ export const BookListProvider = ({ children }: { children: React.ReactNode }) =>
 
   const [booksOffset, setBooksOffset] = useState<IBook[]>([]);
   const [offset, setOffset] = useState<number>(0);
+  const [offsetTotalPages, setOffsetTotalPages] = useState<number>(0);
 
   const [filters, setFilters] = useState<Record<string, string>>({
     isbn13: '',
@@ -62,6 +65,8 @@ export const BookListProvider = ({ children }: { children: React.ReactNode }) =>
         setBooksOffset,
         offset,
         setOffset,
+        offsetTotalPages,
+        setOffsetTotalPages,
         filters,
         setFilters,
         scrollY,
