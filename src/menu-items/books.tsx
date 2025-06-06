@@ -38,6 +38,13 @@ const bookPages: NavItemType = {
           type: 'item',
           url: '/books/list',
           icon: icons.CollectionsBookmarkIcon
+        },
+        {
+          id: 'view-cursor-paginated-books',
+          title: <FormattedMessage id="view-cursor-paginated-books" />,
+          type: 'item',
+          url: '/books/cursor-list',
+          icon: icons.CollectionsBookmarkIcon
         }
       ]
     }

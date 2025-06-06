@@ -10,6 +10,8 @@ type BookListContextProps = {
   setBooks: (books: IBook[]) => void;
   setFilters: (filters: Record<string, string>) => void;
   setScrollY: (y: number) => void;
+  cursors: number[];
+  setCursors: (cursors: number[]) => void;
 };
 
 const BookListContext = createContext<BookListContextProps | undefined>(undefined);
@@ -25,9 +27,12 @@ export const BookListProvider = ({ children }: { children: React.ReactNode }) =>
     rating: '4.7'
   });
   const [scrollY, setScrollY] = useState(0);
+  const [cursors, setCursors] = useState<number[]>([]);
 
   return (
-    <BookListContext.Provider value={{ books, setBooks, filters, setFilters, scrollY, setScrollY }}>{children}</BookListContext.Provider>
+    <BookListContext.Provider value={{ books, setBooks, filters, setFilters, scrollY, setScrollY, cursors, setCursors }}>
+      {children}
+    </BookListContext.Provider>
   );
 };
 
