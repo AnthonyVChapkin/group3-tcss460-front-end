@@ -41,7 +41,6 @@ export default function CursorPaginatedBooksList() {
       const { entries, pagination } = response.data;
       setBooksCursor(entries);
       setScrollY(0);
-      setHasMore(entries.length === limit);
       const totalPages = Math.ceil(pagination.totalRecords / limit);
       setCursorTotalPages(totalPages);
       if (isForward) {
@@ -49,7 +48,6 @@ export default function CursorPaginatedBooksList() {
       }
     } catch {
       setBooksCursor([]);
-      setHasMore(false);
       setCursorTotalPages(0);
     } finally {
       setIsLoading(false);
@@ -96,6 +94,10 @@ export default function CursorPaginatedBooksList() {
 
   const canGoBack = cursors.length > 1;
   const pageNumber = cursors.length;
+
+  useEffect(() => {
+    setHasMore(pageNumber < cursorTotalPages);
+  }, [pageNumber, cursorTotalPages]);
 
   return (
     <Container component="main" maxWidth="lg">

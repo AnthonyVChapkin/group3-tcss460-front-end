@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Fragment, useRef } from 'react';
-import { Box, Container, CssBaseline, Divider, List, Typography, CircularProgress, Button, Grid } from '@mui/material';
+import { Box, Container, CssBaseline, Divider, List, Typography, CircularProgress, Button, Grid, TextField } from '@mui/material';
 import { BookListItem, NoBook } from 'components/BookListItem';
 import axios from 'utils/axios';
 import { useBookList } from 'contexts/BookListContext';
@@ -11,6 +11,7 @@ export default function OffsetPaginatedBooksList() {
   const { booksOffset, setBooksOffset, offset, setOffset, offsetTotalPages, setOffsetTotalPages, setScrollY } = useBookList();
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [pageInput, setPageInput] = useState('');
   const limit = 10;
   const listRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -27,8 +28,11 @@ export default function OffsetPaginatedBooksList() {
     if (booksOffset.length > 0) {
       const saved = window.scrollY;
       if (saved > 0) window.scrollTo(0, saved);
+
+      const currentPage = offset / limit + 1;
+      setHasMore(currentPage < offsetTotalPages);
     }
-  }, [booksOffset]);
+  }, [booksOffset, offset, offsetTotalPages]);
 
   const fetchBooksOffset = async (nextOffset: number) => {
     setIsLoading(true);
@@ -41,9 +45,12 @@ export default function OffsetPaginatedBooksList() {
       const { entries, pagination } = response.data;
       setBooksOffset(entries);
       setScrollY(0);
-      setHasMore(entries.length === limit);
+
       const totalPages = Math.ceil(pagination.totalRecords / limit);
       setOffsetTotalPages(totalPages);
+
+      const currentPage = nextOffset / limit + 1;
+      setHasMore(currentPage < totalPages);
     } catch {
       setBooksOffset([]);
       setHasMore(false);
@@ -63,6 +70,7 @@ export default function OffsetPaginatedBooksList() {
     const newOffset = offset + limit;
     setOffset(newOffset);
     fetchBooksOffset(newOffset);
+    setPageInput('');
   };
 
   const handlePrevious = () => {
@@ -70,6 +78,22 @@ export default function OffsetPaginatedBooksList() {
     const newOffset = offset - limit;
     setOffset(newOffset);
     fetchBooksOffset(newOffset);
+    setPageInput('');
+  };
+
+  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPageInput(e.target.value);
+  };
+
+  const handleGoToPage = () => {
+    const pageNum = parseInt(pageInput, 10);
+    if (isNaN(pageNum) || pageNum < 1 || pageNum > offsetTotalPages) {
+      return;
+    }
+    const newOffset = (pageNum - 1) * limit;
+    setOffset(newOffset);
+    fetchBooksOffset(newOffset);
+    setPageInput('');
   };
 
   const handleDelete = (isbn13: number) => {
@@ -98,10 +122,24 @@ export default function OffsetPaginatedBooksList() {
               </Box>
             ) : (
               <>
-                <Box display="flex" justifyContent="center" mb={2}>
+                <Box display="flex" justifyContent="center" alignItems="center" mb={2} gap={2}>
                   <Typography variant="body1">
                     Page {currentPage} of {offsetTotalPages}
                   </Typography>
+                  <TextField
+                    size="small"
+                    label="Go to page"
+                    value={pageInput}
+                    onChange={handlePageInputChange}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleGoToPage();
+                      }
+                    }}
+                  />
+                  <Button variant="contained" onClick={handleGoToPage} disabled={isLoading || !pageInput}>
+                    Go
+                  </Button>
                 </Box>
                 <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
                 <Box display="flex" justifyContent="space-between" mt={2}>

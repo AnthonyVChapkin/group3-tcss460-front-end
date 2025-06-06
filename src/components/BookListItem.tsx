@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Avatar, Box, IconButton, ListItem, ListItemAvatar, ListItemText, Rating, Typography, ListItemButton } from '@mui/material';
-import { IBook } from '../core/model/book.model';
+import { IBook } from 'core/model/book.model';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import { useBookList } from 'contexts/BookListContext';
 
 export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn13: number) => void }) {
   const { setScrollY } = useBookList();
+  const avg = book.ratings?.average ?? 0;
 
   const handleClick = () => {
     setScrollY(window.scrollY);
@@ -43,9 +44,9 @@ export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn1
                 ISBN: {book.isbn13}
               </Typography>
               <Box display="flex" alignItems="center" gap={1} mt={0.5}>
-                <Rating name="average-rating" value={book.ratings.average} precision={0.1} readOnly size="small" />
+                <Rating name="average-rating" value={avg} precision={0.1} readOnly size="small" />
                 <Typography variant="body2" component="div">
-                  ({book.ratings.average.toFixed(2)})
+                  ({avg.toFixed(2)})
                 </Typography>
               </Box>
             </Box>
