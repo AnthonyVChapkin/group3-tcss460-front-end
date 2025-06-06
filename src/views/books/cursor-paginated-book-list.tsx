@@ -8,12 +8,10 @@ import { useBookList } from 'contexts/BookListContext';
 import { usePathname } from 'next/navigation';
 
 export default function CursorPaginatedBooksList() {
-  const { booksCursor, setBooksCursor, setScrollY, cursors, setCursors } = useBookList();
-
+  const { booksCursor, setBooksCursor, setScrollY, cursors, setCursors, cursorTotalPages, setCursorTotalPages } = useBookList();
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const limit = 10;
-
   const listRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
@@ -40,20 +38,19 @@ export default function CursorPaginatedBooksList() {
         cursor: nextCursor.toString()
       });
       const response = await axios.get(`/books/cursor?${params.toString()}`);
-      const { entries } = response.data;
-
+      const { entries, pagination } = response.data;
       setBooksCursor(entries);
       setScrollY(0);
-
       setHasMore(entries.length === limit);
-
+      const totalPages = Math.ceil(pagination.totalRecords / limit);
+      setCursorTotalPages(totalPages);
       if (isForward) {
         setCursors([...cursors, nextCursor]);
       }
-    } catch (error) {
-      console.error('Error fetching cursor‐paginated books:', error);
+    } catch {
       setBooksCursor([]);
       setHasMore(false);
+      setCursorTotalPages(0);
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +66,6 @@ export default function CursorPaginatedBooksList() {
         fetchBooks(last, false);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleNext = () => {
@@ -80,7 +76,6 @@ export default function CursorPaginatedBooksList() {
 
   const handlePrevious = () => {
     if (cursors.length <= 1) return;
-
     const updated = [...cursors];
     updated.pop();
     const prev = updated[updated.length - 1];
@@ -100,11 +95,11 @@ export default function CursorPaginatedBooksList() {
   ));
 
   const canGoBack = cursors.length > 1;
+  const pageNumber = cursors.length;
 
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
-
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Box ref={listRef}>
@@ -114,8 +109,12 @@ export default function CursorPaginatedBooksList() {
               </Box>
             ) : (
               <>
+                <Box display="flex" justifyContent="center" mb={2}>
+                  <Typography variant="body1">
+                    Page {pageNumber} of {cursorTotalPages}
+                  </Typography>
+                </Box>
                 <List>{booksAsComponents.length ? booksAsComponents : <NoBook />}</List>
-
                 <Box display="flex" justifyContent="space-between" mt={2}>
                   <Button onClick={handlePrevious} variant="contained" disabled={!canGoBack || isLoading}>
                     Previous Page

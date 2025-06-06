@@ -11,6 +11,8 @@ type BookListContextProps = {
   setBooksCursor: (books: IBook[]) => void;
   cursors: number[];
   setCursors: React.Dispatch<React.SetStateAction<number[]>>;
+  cursorTotalPages: number;
+  setCursorTotalPages: (cursorTotalPages: number) => void;
 
   booksOffset: IBook[];
   setBooksOffset: (books: IBook[]) => void;
@@ -30,6 +32,7 @@ export const BookListProvider = ({ children }: { children: React.ReactNode }) =>
 
   const [booksCursor, setBooksCursor] = useState<IBook[]>([]);
   const [cursors, setCursors] = useState<number[]>([0]);
+  const [cursorTotalPages, setCursorTotalPages] = useState<number>(0);
 
   const [booksOffset, setBooksOffset] = useState<IBook[]>([]);
   const [offset, setOffset] = useState<number>(0);
@@ -53,6 +56,8 @@ export const BookListProvider = ({ children }: { children: React.ReactNode }) =>
         setBooksCursor,
         cursors,
         setCursors,
+        cursorTotalPages,
+        setCursorTotalPages,
         booksOffset,
         setBooksOffset,
         offset,
