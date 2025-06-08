@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'utils/axios';
-
 
 // MUI
 import Grid from '@mui/material/Grid';
@@ -16,7 +16,9 @@ import InputLabel from '@mui/material/InputLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 
 export default function ChangePasswordPage() {
+  const { data: session } = useSession();
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   return (
     <Formik
@@ -27,34 +29,53 @@ export default function ChangePasswordPage() {
       }}
       validationSchema={Yup.object().shape({
         currentPassword: Yup.string().required('Current password is required'),
-        newPassword: Yup.string().min(8, 'New password must be at least 8 characters').required('New password is required'),
+        newPassword: Yup.string()
+          .min(8, 'New password must be at least 8 characters')
+          .required('New password is required'),
         confirmPassword: Yup.string()
           .oneOf([Yup.ref('newPassword')], 'Passwords must match')
           .required('Confirm password is required')
       })}
-     onSubmit={async (values, { setSubmitting, resetForm }) => {
+ onSubmit={async (values, { setSubmitting, resetForm }) => {
   setSuccessMessage('');
-  try {
-    await axios.post('/change-password', {
-      currentPassword: values.currentPassword,
-      newPassword: values.newPassword
-    });
+  setErrorMessage('');
 
-    setSuccessMessage('Password changed successfully!');
+  try {
+    // Remove trailing slash from WEB_API_URL if it exists
+    const baseUrl = process.env.WEB_API_URL?.replace(/\/$/, '');
+    const endpoint = '/changePassword';
+
+    const response = await axios.patch(
+      `${baseUrl}${endpoint}`,
+      {
+        oldPassword: values.currentPassword,
+        newPassword: values.newPassword
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${session?.token?.accessToken}`
+        }
+      }
+    );
+
+    console.log('Success:', response.data.message);
+    setSuccessMessage(response.data.message);
     resetForm();
   } catch (error: any) {
-    console.error(error);
-    alert(error?.response?.data?.message || error.message || 'Password change failed');
+    console.error(error.response?.data?.message || error.message);
+    setErrorMessage(error.response?.data?.message || 'Error changing password');
   } finally {
     setSubmitting(false);
   }
 }}
+
     >
       {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <form noValidate onSubmit={handleSubmit}>
           <Typography variant="h5" sx={{ mb: 2 }}>
             Change Password
           </Typography>
+
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Stack spacing={1}>
@@ -70,7 +91,9 @@ export default function ChangePasswordPage() {
                   error={Boolean(touched.currentPassword && errors.currentPassword)}
                 />
               </Stack>
-              {touched.currentPassword && errors.currentPassword && <FormHelperText error>{errors.currentPassword}</FormHelperText>}
+              {touched.currentPassword && errors.currentPassword && (
+                <FormHelperText error>{errors.currentPassword}</FormHelperText>
+              )}
             </Grid>
 
             <Grid item xs={12}>
@@ -87,7 +110,9 @@ export default function ChangePasswordPage() {
                   error={Boolean(touched.newPassword && errors.newPassword)}
                 />
               </Stack>
-              {touched.newPassword && errors.newPassword && <FormHelperText error>{errors.newPassword}</FormHelperText>}
+              {touched.newPassword && errors.newPassword && (
+                <FormHelperText error>{errors.newPassword}</FormHelperText>
+              )}
             </Grid>
 
             <Grid item xs={12}>
@@ -104,8 +129,16 @@ export default function ChangePasswordPage() {
                   error={Boolean(touched.confirmPassword && errors.confirmPassword)}
                 />
               </Stack>
-              {touched.confirmPassword && errors.confirmPassword && <FormHelperText error>{errors.confirmPassword}</FormHelperText>}
+              {touched.confirmPassword && errors.confirmPassword && (
+                <FormHelperText error>{errors.confirmPassword}</FormHelperText>
+              )}
             </Grid>
+
+            {errorMessage && (
+              <Grid item xs={12}>
+                <FormHelperText error>{errorMessage}</FormHelperText>
+              </Grid>
+            )}
 
             {successMessage && (
               <Grid item xs={12}>
@@ -114,7 +147,15 @@ export default function ChangePasswordPage() {
             )}
 
             <Grid item xs={12}>
-              <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+              <Button
+                disableElevation
+                disabled={isSubmitting}
+                fullWidth
+                size="large"
+                type="submit"
+                variant="contained"
+                color="primary"
+              >
                 Submit
               </Button>
             </Grid>
