@@ -12,7 +12,6 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import axios from 'utils/axios';
 import { IBook } from 'core/model/book.model';
 import { useBookList } from 'contexts/BookListContext';
 
