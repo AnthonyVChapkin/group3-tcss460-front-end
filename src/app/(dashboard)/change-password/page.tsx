@@ -36,35 +36,39 @@ export default function ChangePasswordPage() {
           .oneOf([Yup.ref('newPassword')], 'Passwords must match')
           .required('Confirm password is required')
       })}
-      onSubmit={async (values, { setSubmitting, resetForm }) => {
-        setSuccessMessage('');
-        setErrorMessage('');
+ onSubmit={async (values, { setSubmitting, resetForm }) => {
+  setSuccessMessage('');
+  setErrorMessage('');
 
-        try {
-       const response = await axios.patch(
-  `${process.env.WEB_API_URL}/changePassword`,
-  {
-    oldPassword: values.currentPassword,
-    newPassword: values.newPassword
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${session?.token?.accessToken}`
-    }
-  }
-);
+  try {
+    // Remove trailing slash from WEB_API_URL if it exists
+    const baseUrl = process.env.WEB_API_URL?.replace(/\/$/, '');
+    const endpoint = '/changePassword';
 
-
-          console.log('Success:', response.data.message);
-          setSuccessMessage(response.data.message);
-          resetForm();
-        } catch (error: any) {
-          console.error(error.response?.data?.message || error.message);
-          setErrorMessage(error.response?.data?.message || 'Error changing password');
-        } finally {
-          setSubmitting(false);
+    const response = await axios.patch(
+      `${baseUrl}${endpoint}`,
+      {
+        oldPassword: values.currentPassword,
+        newPassword: values.newPassword
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${session?.token?.accessToken}`
         }
-      }}
+      }
+    );
+
+    console.log('Success:', response.data.message);
+    setSuccessMessage(response.data.message);
+    resetForm();
+  } catch (error: any) {
+    console.error(error.response?.data?.message || error.message);
+    setErrorMessage(error.response?.data?.message || 'Error changing password');
+  } finally {
+    setSubmitting(false);
+  }
+}}
+
     >
       {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
         <form noValidate onSubmit={handleSubmit}>
