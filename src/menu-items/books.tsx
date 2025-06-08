@@ -38,6 +38,13 @@ const bookPages: NavItemType = {
           type: 'item',
           url: '/books/list',
           icon: icons.CollectionsBookmarkIcon
+        },
+        {
+          id: 'create-book',
+          title: <FormattedMessage id="create-book" />,
+          type: 'item',
+          url: '/books/create',
+          icon: icons.BookIcon
         }
       ]
     }
