@@ -40,14 +40,6 @@ const bookPages: NavItemType = {
           icon: icons.CollectionsBookmarkIcon
         },
         {
-
-          id: 'create-book',
-          title: <FormattedMessage id="create-book" />,
-          type: 'item',
-          url: '/books/create',
-          icon: icons.BookIcon
-        },
-        {
           id: 'view-cursor-paginated-books',
           title: <FormattedMessage id="view-cursor-paginated-books" />,
           type: 'item',
@@ -59,6 +51,13 @@ const bookPages: NavItemType = {
           title: <FormattedMessage id="view-offset-paginated-books" />,
           type: 'item',
           url: '/books/offset-list',
+          icon: icons.CollectionsBookmarkIcon
+        },
+        {
+          id: 'view-book-create',
+          title: <FormattedMessage id="view-book-create" />,
+          type: 'item',
+          url: '/books/book-create',
           icon: icons.CollectionsBookmarkIcon
         }
       ]
