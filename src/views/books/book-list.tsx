@@ -26,7 +26,7 @@ export default function BooksList() {
     if (books.length > 0 && scrollY > 0) {
       window.scrollTo(0, scrollY);
     }
-  }, [books]);
+  }, [books, scrollY]);
 
   const fetchBooks = async ({ scrollToTop = false } = {}) => {
     setIsLoading(true);
@@ -37,14 +37,10 @@ export default function BooksList() {
           params.append(key, value.trim());
         }
       }
-
       const response = await axios.get(`/books?${params.toString()}`);
       setBooks(response.data.books || []);
-
       if (scrollToTop) {
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 100);
+        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
       }
     } catch (error) {
       console.error('Error fetching books:', error);
@@ -60,9 +56,17 @@ export default function BooksList() {
     }
   }, []);
 
-  // Not connected to web api yet.
-  const handleDelete = (isbn13: number) => {
-    setBooks(books.filter((book) => book.isbn13 !== isbn13));
+  const handleDelete = async (isbn13: number) => {
+    if (!window.confirm(`Are you sure you want to delete book ISBN ${isbn13}?`)) {
+      return;
+    }
+    try {
+      await axios.delete(`/books/${isbn13}`);
+      setBooks(books.filter((book) => book.isbn13 !== isbn13));
+    } catch (error: any) {
+      console.error('Delete failed:', error);
+      alert(error.response?.data?.message || 'Failed to delete book.');
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,9 +78,9 @@ export default function BooksList() {
     fetchBooks({ scrollToTop: true });
   };
 
-  const booksAsComponents = books.map((book, index, books) => (
+  const booksAsComponents = books.map((book, index) => (
     <Fragment key={book.isbn13}>
-      <BookListItem book={book} onDelete={handleDelete} />
+      <BookListItem book={book} onDelete={handleDelete} isDeletable={true} />
       {index < books.length - 1 && <Divider variant="middle" component="li" />}
     </Fragment>
   ));
@@ -84,21 +88,11 @@ export default function BooksList() {
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
-
       <Grid container spacing={2}>
-        {/* Sidebar Filter Form */}
         <Grid item xs={12} md={4}>
           <Paper
             elevation={3}
-            sx={{
-              position: 'sticky',
-              top: 72,
-              zIndex: 1000,
-              backgroundColor: 'background.paper',
-              padding: 2,
-              paddingTop: 3,
-              border: '1px solid #ccc'
-            }}
+            sx={{ position: 'sticky', top: 72, zIndex: 1000, backgroundColor: 'background.paper', p: 2, border: '1px solid #ccc' }}
           >
             <Typography component="h1" variant="h6" sx={{ mb: 2 }}>
               Filter Books
@@ -144,8 +138,6 @@ export default function BooksList() {
             </Box>
           </Paper>
         </Grid>
-
-        {/* Book List */}
         <Grid item xs={12} md={8}>
           <Box ref={bookListRef}>
             {isLoading ? (
