@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Stack, TextField, Typography, Button, Box, CircularProgress, Alert } from '@mui/material';
-import { IBook } from 'core/model/book.model';
+import axios from 'utils/axios';
 
-export function BookCreateForm({ onSave }: { onSave: (book: IBook) => void }) {
+export default function BookCreateForm() {
   /* ------------ form state ------------ */
   const [title, setTitle] = useState('');
   const [authors, setAuthors] = useState('');
@@ -31,8 +31,9 @@ export function BookCreateForm({ onSave }: { onSave: (book: IBook) => void }) {
   /* ------------ submit ------------ */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !authors || !isbn13) {
-      setError('Title, Authors, and ISBN-13 are required.');
+
+    if (!title || !authors || !isbn13 || !publication || !originalTitle || !smallUrl || !largeUrl) {
+      setError('All fields are required.');
       return;
     }
 
@@ -42,39 +43,33 @@ export function BookCreateForm({ onSave }: { onSave: (book: IBook) => void }) {
 
     try {
       const payload = {
-        title,
-        authors,
-        publication: publication ? Number(publication) : undefined,
-        original_title: originalTitle || undefined,
         isbn13: Number(isbn13),
-        icons: { small: smallUrl.trim() || undefined, large: largeUrl.trim() || undefined }
+        authors: authors.trim(),
+        publication_year: Number(publication),
+        original_title: originalTitle.trim(),
+        title: title.trim(),
+        rating_1_star: 0,
+        rating_2_star: 0,
+        rating_3_star: 0,
+        rating_4_star: 0,
+        rating_5_star: 0,
+        image_url: largeUrl.trim(),
+        small_image_url: smallUrl.trim()
       };
 
-      const newBook: IBook = {
-        ...payload,
-        ratings: {
-          average: 0,
-          count: 0,
-          rating_1: 0,
-          rating_2: 0,
-          rating_3: 0,
-          rating_4: 0,
-          rating_5: 0
-        }
-      } as IBook;
+      const { data } = await axios.post('/books/', payload);
 
-      onSave(newBook); // hand back to page
-      setSuccess('Book created successfully!');
-      reset();
+      setSuccess(data.message || 'Book created successfully!');
+      resetForm();
     } catch (err: any) {
       console.error('Create failed:', err);
-      setError(err.response?.data?.message ?? 'Failed to create book.');
+      setError(err.response?.data?.message || err.message || 'Failed to create book.');
     } finally {
       setBusy(false);
     }
   };
 
-  const reset = () => {
+  const resetForm = () => {
     setTitle('');
     setAuthors('');
     setPublication('');
@@ -86,7 +81,7 @@ export function BookCreateForm({ onSave }: { onSave: (book: IBook) => void }) {
 
   /* ------------ ui ------------ */
   return (
-    <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 600 }}>
+    <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 600, mx: 'auto' }}>
       <Typography variant="h5" gutterBottom>
         Create New Book
       </Typography>
@@ -105,19 +100,32 @@ export function BookCreateForm({ onSave }: { onSave: (book: IBook) => void }) {
       <Box component="form" onSubmit={handleSubmit} noValidate>
         <Stack spacing={2}>
           <TextField label="Title" value={title} onChange={(e) => setTitle(e.target.value)} required fullWidth />
+
           <TextField
             label="Authors"
             value={authors}
             onChange={(e) => setAuthors(e.target.value)}
+            helperText="Separate multiple authors with commas"
             required
             fullWidth
-            helperText="Separate multiple authors with commas"
           />
-          <TextField label="Publication" value={publication} onChange={(e) => setPublication(e.target.value)} type="number" fullWidth />
-          <TextField label="Original Title" value={originalTitle} onChange={(e) => setOriginal(e.target.value)} fullWidth />
+
+          <TextField
+            label="Publication Year"
+            type="number"
+            value={publication}
+            onChange={(e) => setPublication(e.target.value)}
+            required
+            fullWidth
+          />
+
+          <TextField label="Original Title" value={originalTitle} onChange={(e) => setOriginal(e.target.value)} required fullWidth />
+
           <TextField label="ISBN-13" value={isbn13} onChange={(e) => setIsbn13(e.target.value)} required fullWidth />
-          <TextField label="Small Cover URL" value={smallUrl} onChange={(e) => setSmallUrl(e.target.value)} fullWidth />
-          <TextField label="Large Cover URL" value={largeUrl} onChange={(e) => setLargeUrl(e.target.value)} fullWidth />
+
+          <TextField label="Small Cover URL" value={smallUrl} onChange={(e) => setSmallUrl(e.target.value)} required fullWidth />
+
+          <TextField label="Large Cover URL" value={largeUrl} onChange={(e) => setLargeUrl(e.target.value)} required fullWidth />
 
           <Box sx={{ position: 'relative' }}>
             <Button type="submit" variant="contained" disabled={busy} fullWidth>

@@ -1,3 +1,5 @@
+'use client';
+
 import BookCreate from 'views/books/book-create';
 
 // ==============================|| PAGE ||============================== //
