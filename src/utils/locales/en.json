@@ -17,8 +17,9 @@
   "book-pages": "Book Pages",
   "books": "Books",
   "view-book": "View a Book",
-  "view-books": "View Books",
+  "view-books": "View/Delete Books",
   "view-cursor-paginated-books": "Cursor View Books",
   "view-offset-paginated-books": "Offset View Books",
-  "view-book-create": "Add a Book"
+  "view-book-create": "Add a Book",
+  "view-delete-books-by-author": "Delete Books By Author"
 }

@@ -59,6 +59,13 @@ const bookPages: NavItemType = {
           type: 'item',
           url: '/books/book-create',
           icon: icons.CollectionsBookmarkIcon
+        },
+        {
+          id: 'view-delete-books-by-author',
+          title: <FormattedMessage id="view-delete-books-by-author" />,
+          type: 'item',
+          url: '/books/delete-books-by-author',
+          icon: icons.CollectionsBookmarkIcon
         }
       ]
     }
