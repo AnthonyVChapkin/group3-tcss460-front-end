@@ -5,7 +5,15 @@ import { IBook } from 'core/model/book.model';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import { useBookList } from 'contexts/BookListContext';
 
-export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn13: number) => void }) {
+export function BookListItem({
+  book,
+  onDelete,
+  isDeletable = false
+}: {
+  book: IBook;
+  onDelete: (isbn13: number) => void;
+  isDeletable?: boolean;
+}) {
   const { setScrollY } = useBookList();
   const avg = book.ratings?.average ?? 0;
 
@@ -18,9 +26,11 @@ export function BookListItem({ book, onDelete }: { book: IBook; onDelete: (isbn1
       alignItems="flex-start"
       disablePadding
       secondaryAction={
-        <IconButton edge="end" aria-label={`delete ${book.title}`} onClick={() => onDelete(book.isbn13)}>
-          <DeleteIcon />
-        </IconButton>
+        isDeletable && (
+          <IconButton edge="end" aria-label={`delete ${book.title}`} onClick={() => onDelete(book.isbn13)}>
+            <DeleteIcon />
+          </IconButton>
+        )
       }
     >
       <ListItemButton component={Link} href={`/books/book/${book.isbn13}`} sx={{ textDecoration: 'none' }} onClick={handleClick}>
