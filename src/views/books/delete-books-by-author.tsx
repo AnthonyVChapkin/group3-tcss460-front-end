@@ -23,7 +23,9 @@ export default function DeleteBooksByAuthorPage() {
     setError(null);
     setSuccess(null);
     try {
-      const response = await axios.delete(`/books/rangeOfBooks/${encodeURIComponent(author.trim())}`);
+      const response = await axios.delete('/books/rangeOfBooks', {
+        data: { authors: author.trim() }
+      });
       setDeletedBooks(response.data.deletedBooks || []);
       setSuccess(response.data.message || 'Books deleted successfully');
     } catch (err: any) {
