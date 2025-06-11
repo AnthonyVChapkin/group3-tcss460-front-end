@@ -82,3 +82,5 @@ During the Production Sprint, the primary forms of communication were:
 ## Production Sprint Comments
 - Deadline wasn't met this time either for similar reasons as Beta II. Some features as of 6/9/2025 10:30 pm do not work because of group 9's web api,
 but should be fixed soon. For any concerns, feel free to reach out to Anthony Chapkin.
+- As of 6/10/2025 5:51 pm, the web api bugs have been fixed, and the pages should function as intended. Just as a warning, the last time I checked the docs,
+they were still pretty inaccurate for certain routes. Any problems I had with group 9's web api were promptly addressed by Christian Bonnalie.
